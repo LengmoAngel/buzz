@@ -40,7 +40,7 @@ class PreferencesDialog(QDialog):
 
         self.updated_preferences = copy.deepcopy(preferences)
 
-        self.setWindowTitle("Preferences")
+        self.setWindowTitle(_("Preferences"))
 
         layout = QVBoxLayout(self)
         tab_widget = QTabWidget(self)
@@ -75,4 +75,4 @@ class PreferencesDialog(QDialog):
         self.setLayout(layout)
 
         self.setMinimumHeight(500)
-        self.setMinimumWidth(500)
+        self.setMinimumWidth(550)

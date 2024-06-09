@@ -25,6 +25,7 @@ parts:
     plugin: make
     make-parameters: [ "FLAVOR=qt5" ]
     build-packages:
+      - build-essential
       - qtbase5-dev
       - dpkg-dev
     stage-packages:
@@ -38,8 +39,8 @@ parts:
       - libqt5gui5
       - libgdk-pixbuf2.0-0
       - libqt5svg5 # for loading icon themes which are svg
-      - locales-all
       - libglib2.0-0
+      - xdg-user-dirs
     override-prime: |
       craftctl default
       glib-compile-schemas usr/share/glib-2.0/schemas
@@ -80,7 +81,6 @@ parts:
     source: .
     build-packages:
       - portaudio19-dev
-      - python3-poetry
     stage-packages:
       # Audio
       - ffmpeg
@@ -100,10 +100,15 @@ parts:
       - libxcb-xinerama0
       - libxcb-shape0
       - libxcb-cursor0
+      # GPU
+      - libglu1-mesa
     override-build: |
       craftctl default
+      pip install poetry
       pip install .
-      python build.py
+      pip uninstall -y ctranslate2
+      pip install https://github.com/raivisdejus/CTranslate2-no-execstack/releases/download/v4.2.1/ctranslate2-4.2.1-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+      python3 build.py
       mkdir $CRAFT_PART_INSTALL/buzz
       cp $CRAFT_PART_BUILD/buzz/whisper_cpp.py $CRAFT_PART_INSTALL/buzz/
       cp $CRAFT_PART_BUILD/buzz/libwhisper.so $CRAFT_PART_INSTALL/buzz/

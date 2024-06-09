@@ -1,5 +1,6 @@
 import enum
 import typing
+import logging
 
 from PyQt6.QtCore import QSettings
 
@@ -10,6 +11,7 @@ class Settings:
     def __init__(self, application=""):
         self.settings = QSettings(APP_NAME, application)
         self.settings.sync()
+        logging.debug(f"settings filename: {self.settings.fileName()}")
 
     class Key(enum.Enum):
         RECORDING_TRANSCRIBER_TASK = "recording-transcriber/task"
@@ -17,6 +19,8 @@ class Settings:
         RECORDING_TRANSCRIBER_LANGUAGE = "recording-transcriber/language"
         RECORDING_TRANSCRIBER_TEMPERATURE = "recording-transcriber/temperature"
         RECORDING_TRANSCRIBER_INITIAL_PROMPT = "recording-transcriber/initial-prompt"
+        RECORDING_TRANSCRIBER_EXPORT_ENABLED = "recording-transcriber/export-enabled"
+        RECORDING_TRANSCRIBER_EXPORT_FOLDER = "recording-transcriber/export-folder"
 
         FILE_TRANSCRIBER_TASK = "file-transcriber/task"
         FILE_TRANSCRIBER_MODEL = "file-transcriber/model"
@@ -27,6 +31,7 @@ class Settings:
         FILE_TRANSCRIBER_EXPORT_FORMATS = "file-transcriber/export-formats"
 
         DEFAULT_EXPORT_FILE_NAME = "transcriber/default-export-file-name"
+        CUSTOM_OPENAI_BASE_URL = "transcriber/custom-openai-base-url"
 
         SHORTCUTS = "shortcuts"
 

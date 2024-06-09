@@ -6,7 +6,7 @@ import platform
 import sys
 from typing import TextIO
 
-from platformdirs import user_log_dir
+from platformdirs import user_log_dir, user_cache_dir
 
 from buzz.assets import APP_BASE_DIR
 
@@ -48,8 +48,6 @@ def main():
         format=log_format,
     )
 
-    logging.debug("app_dir: %s", APP_BASE_DIR)
-
     if getattr(sys, "frozen", False) is False:
         stdout_handler = logging.StreamHandler(sys.stdout)
         stdout_handler.setLevel(logging.DEBUG)
@@ -58,6 +56,10 @@ def main():
 
     from buzz.cli import parse_command_line
     from buzz.widgets.application import Application
+
+    logging.debug("app_dir: %s", APP_BASE_DIR)
+    logging.debug("log_dir: %s", log_dir)
+    logging.debug("cache_dir: %s", user_cache_dir("Buzz"))
 
     app = Application(sys.argv)
     parse_command_line(app)

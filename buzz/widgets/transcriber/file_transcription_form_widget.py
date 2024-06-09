@@ -63,7 +63,7 @@ class FileTranscriptionFormWidget(QWidget):
             )
             export_format_layout.addWidget(export_format_checkbox)
 
-        file_transcription_layout.addRow("Export:", export_format_layout)
+        file_transcription_layout.addRow(_("Export:"), export_format_layout)
 
         layout.addWidget(transcription_options_group_box)
         layout.addLayout(file_transcription_layout)
@@ -87,6 +87,10 @@ class FileTranscriptionFormWidget(QWidget):
     def on_word_level_timings_changed(self, value: int):
         self.transcription_options.word_level_timings = (
             value == Qt.CheckState.Checked.value
+        )
+
+        self.transcription_options_changed.emit(
+            (self.transcription_options, self.file_transcription_options)
         )
 
     def get_on_checkbox_state_changed_callback(self, output_format: OutputFormat):

@@ -10,6 +10,8 @@ bundle_windows: dist/Buzz
 
 bundle_mac: dist/Buzz.app codesign_all_mac zip_mac notarize_zip staple_app_mac dmg_mac
 
+bundle_mac_unsigned: dist/Buzz.app zip_mac dmg_mac_unsigned
+
 UNAME_S := $(shell uname -s)
 
 LIBWHISPER :=
@@ -29,9 +31,6 @@ clean:
 	rm -rf dist/* || true
 
 COVERAGE_THRESHOLD := 80
-ifeq ($(UNAME_S),Linux)
-	COVERAGE_THRESHOLD := 74
-endif
 
 test: buzz/whisper_cpp.py translation_mo
 	pytest -s -vv --cov=buzz --cov-report=xml --cov-report=html --benchmark-skip --cov-fail-under=${COVERAGE_THRESHOLD}
@@ -92,6 +91,20 @@ dmg_mac:
 		--app-drop-link 425 120 \
 		--codesign "$$BUZZ_CODESIGN_IDENTITY" \
 		--notarize "$$BUZZ_KEYCHAIN_NOTARY_PROFILE" \
+		"${mac_dmg_path}" \
+		"dist/dmg/"
+
+dmg_mac_unsigned:
+	ditto -x -k "${mac_zip_path}" dist/dmg
+	create-dmg \
+		--volname "Buzz" \
+		--volicon "./assets/buzz.icns" \
+		--window-pos 200 120 \
+		--window-size 600 300 \
+		--icon-size 100 \
+		--icon "Buzz.app" 175 120 \
+		--hide-extension "Buzz.app" \
+		--app-drop-link 425 120 \
 		"${mac_dmg_path}" \
 		"dist/dmg/"
 
@@ -158,11 +171,12 @@ translation_po_all:
 	$(MAKE) translation_po locale=zh_CN
 	$(MAKE) translation_po locale=zh_TW
 	$(MAKE) translation_po locale=it_IT
+	$(MAKE) translation_po locale=lv_LV
 
 TMP_POT_FILE_PATH := $(shell mktemp)
 PO_FILE_PATH := buzz/locale/${locale}/LC_MESSAGES/buzz.po
 translation_po:
-	xgettext --from-code=UTF-8 -o "${TMP_POT_FILE_PATH}" -l python $(shell find buzz/widgets -name '*.py')
+	xgettext --from-code=UTF-8 -o "${TMP_POT_FILE_PATH}" -l python $(shell find buzz -name '*.py')
 	sed -i.bak 's/CHARSET/UTF-8/' ${TMP_POT_FILE_PATH} && rm ${TMP_POT_FILE_PATH}.bak
 	msgmerge -U ${PO_FILE_PATH} ${TMP_POT_FILE_PATH}
 
